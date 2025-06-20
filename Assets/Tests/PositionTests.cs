@@ -20,4 +20,5 @@ public class PositionTests
         var weight = PositionUtils.IsNeighbour(pos1, pos2, diagonal);
         return weight;
     }
+    
 }
