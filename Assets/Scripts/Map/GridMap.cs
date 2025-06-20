@@ -11,7 +11,7 @@ public class GridMap
     public List<Tile> Tiles;
     public Dictionary<Tile, Tile> AdditionalConnections;
     
-    public IntBound MapBounds;
+    public IntBound3D MapBounds3D;
 
     public GridMap(List<Tile> tiles)
     {
@@ -31,6 +31,6 @@ public class GridMap
         
         var botLeft = new int3(0, 0, 0);
         var topRight = new int3(Length - 1, Width - 1, Height - 1);
-        MapBounds = new IntBound(botLeft, topRight);
+        MapBounds3D = new IntBound3D(botLeft, topRight);
     }
 }
