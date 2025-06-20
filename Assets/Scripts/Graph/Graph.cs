@@ -4,16 +4,13 @@ using UnityEngine;
 
 public class Graph
 {
-    private Dictionary<int3, Node> _nodesMap;
+    private Dictionary<int3, Node> _nodesMap = new();
 
-    public Graph()
-    {
-        _nodesMap = new Dictionary<int3, Node>();
-    }
+    public Dictionary<int3, Node> NodesMap => _nodesMap;
 
     public void SetNode(int3 pos, int level)
     {
-        if (_nodesMap.TryGetValue(pos, out Node node))
+        if (_nodesMap.TryGetValue(pos, out var node))
         {
             node.hierrarchyLevel = level;
             return;
