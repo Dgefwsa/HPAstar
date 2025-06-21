@@ -22,7 +22,6 @@ public class Graph
         };
         _nodesMap.Add(pos, newNode);
     }
-
     public void SetEdge(int3 start, int3 dest, float weight, int level, bool isUndirected) 
     {
         if (_nodesMap.TryGetValue(start, out Node startNode))
@@ -48,6 +47,11 @@ public class Graph
         else Debug.LogWarning($"{start.x}:{start.y}:{start.z} does not exist as start node");
         
         if (isUndirected) SetEdge(dest, start, weight, level, false);
+    }
+
+    public bool TryGetNode(int3 pos, out Node node)
+    {
+        return _nodesMap.TryGetValue(pos, out node);
     }
     
 }

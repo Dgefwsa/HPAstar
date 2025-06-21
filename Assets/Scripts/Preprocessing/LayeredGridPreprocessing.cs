@@ -38,19 +38,22 @@ public class LayeredGridPreprocessing
 
     private void DefineActualMapInGraph(Graph graph)
     {
-        foreach (Tile tile in _map.Tiles)
+        for (int i = 0; i < _map.Tiles.Count; i++)
         {
-            graph.SetNode(tile.pos, 0);
+            if (!_map.Tiles[i].isObstacle) 
+                graph.SetNode(_map.Tiles[i].pos, 0);
         }
         for (int i = 0; i < _map.Tiles.Count; i++)
-        for (int j = i + 1; j < _map.Tiles.Count; j++)
+        for (int j = -1; j < 1; j += 2)
         {
-            if (_map.Tiles[i].isObstacle || _map.Tiles[j].isObstacle) continue;
-            var weight = PositionUtils.IsNeighbour(_map.Tiles[i].pos, _map.Tiles[j].pos, _useDiagonal);
-            if (weight != 0)
-            {
-                graph.SetEdge(_map.Tiles[i].pos, _map.Tiles[j].pos, weight, 0, true);
-            }
+            var pos = _map.Tiles[i].pos;
+            if (_map.TilesMap.TryGetValue(pos, out Tile tile) && _map.TilesMap.TryGetValue(new int3(pos.x + j, pos.y, pos.z), out Tile tile2))
+                if (!tile.isObstacle && !tile2.isObstacle)
+                    graph.SetEdge(tile.pos, tile2.pos, 1, 0, true);
+            if (_map.TilesMap.TryGetValue(pos, out tile) && _map.TilesMap.TryGetValue(new int3(pos.x, pos.y + j, pos.z), out tile2))
+                if (!tile.isObstacle && !tile2.isObstacle)
+                    graph.SetEdge(tile.pos, tile2.pos, 1, 0, true);
+            //TODO add diagonals SetEdge
         }
     }
     
