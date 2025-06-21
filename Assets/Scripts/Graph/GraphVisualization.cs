@@ -6,6 +6,7 @@ using UnityEngine;
 public class GraphVisualization : MonoBehaviour
 {
     public Graph Graph;
+    public List<int3> Path = new List<int3>();
     public int HierarchyLevel;
 
     [Header("Gizmos settings")]
@@ -18,8 +19,9 @@ public class GraphVisualization : MonoBehaviour
         foreach (KeyValuePair<int3,Node> pair in Graph.NodesMap)
         {
             if (pair.Value.hierrarchyLevel < HierarchyLevel) continue;
-            
+
             Gizmos.color = Color.blue;
+            if (Path.Contains(pair.Key)) Gizmos.color = Color.red;
             Gizmos.DrawSphere(new Vector3(pair.Value.pos.x, pair.Value.pos.y, pair.Value.pos.z), radius);
             foreach (Edge edge in pair.Value.outgoingEdges)
             {
