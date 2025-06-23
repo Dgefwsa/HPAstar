@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -6,38 +7,49 @@ using UnityEngine.Profiling;
 public class IterativeDeepeningAstar : IPathfinder
 {
     private const float FOUND = -1;
-    private Graph _graph;
+    private float weight = 0.5f;
 
-    public IterativeDeepeningAstar(Graph graph)
+    public List<int3> FindPath(Graph graph, int3 startPos, int3 endPos, int level)
     {
-        _graph = graph;
-    }
-    public List<int3> FindPath(int3 startPos, int3 endPos)
-    {
-        Profiler.BeginSample("Iterative Deepening A*");
-        if (!_graph.TryGetNode(startPos, out var start) || !_graph.TryGetNode(endPos, out var goal))
+        if (!graph.TryGetNode(startPos, out var start) || !graph.TryGetNode(endPos, out var goal))
             return null;
         
-        float threshold = Heuristic(startPos, endPos);
-        var path = new List<Node> { start };
-
-        var counter = 0;
-        while (counter < _graph.NodesMap.Count)
+        if (start.hierrarchyLevel < level || goal.hierrarchyLevel < level)
+            return null;
+        
+        Profiler.BeginSample("Iterative Deepening A*");
+        float initialThreshold = Heuristic(startPos, endPos);
+        float threshold = initialThreshold;
+        var path = new List<Node>((int)threshold) { start };
+        var pathEdges = new List<Edge>();
+        var visited = new HashSet<Node>((int)threshold);
+        
+        while (true)
         {
-            counter++;
-            var visited = new HashSet<Node>();
-            float temp = Search(start, goal, 0, threshold, path, visited);
+            float temp = Search(start, goal, 0, threshold, path, pathEdges, visited, level);
 
             if (temp == FOUND)
-                return path.ConvertAll(n => n.pos);
+            {
+                var result = new HashSet<int3>();
+                foreach (var edge in pathEdges)
+                {
+                    foreach (int3 pos in edge.GetPath())
+                    {
+                        result.Add(pos);
+                    }
+                }
+                Profiler.EndSample();
+                return result.ToList();
+            }
 
-            if (float.IsPositiveInfinity(temp))
+            if (temp == float.PositiveInfinity)
+            {
+                Profiler.EndSample();
                 return null;
-
+            }
+            
             threshold = temp;
         }
-        Profiler.EndSample();
-        return null;
     }
     private float Search(
         Node current,
@@ -45,7 +57,9 @@ public class IterativeDeepeningAstar : IPathfinder
         float g,
         float threshold,
         List<Node> path,
-        HashSet<Node> visited)
+        List<Edge> pathEdges,
+        HashSet<Node> visited,
+        int level)
     {
         float f = g + Heuristic(current.pos, goal.pos);
         if (f > threshold)
@@ -61,9 +75,10 @@ public class IterativeDeepeningAstar : IPathfinder
         {
             var neighbor = edge.destinationNode;
 
-            if (visited.Contains(neighbor))
+            if (visited.Contains(neighbor) || neighbor.hierrarchyLevel < level)
                 continue;
 
+            pathEdges.Add(edge);
             path.Add(neighbor);
             float t = Search(
                 neighbor,
@@ -71,25 +86,27 @@ public class IterativeDeepeningAstar : IPathfinder
                 g + edge.weight,
                 threshold,
                 path,
-                visited
-            );
+                pathEdges,
+                visited,
+                level);
 
             if (t == FOUND)
                 return FOUND;
 
             if (t < min)
-                min = t;
+                min = t;    
 
+            if (pathEdges.Count > 0)
+                pathEdges.RemoveAt(pathEdges.Count - 1);
             path.RemoveAt(path.Count - 1);
         }
-
-        visited.Remove(current);
+        
         return min;
     }
 
     private float Heuristic(int3 a, int3 b)
     {
-        return math.abs(a.x - b.x) + math.abs(a.y - b.y) + math.abs(a.z - b.z);
+        return math.abs(a.x - b.x) + math.abs(a.y - b.y);
     }
     
 }
