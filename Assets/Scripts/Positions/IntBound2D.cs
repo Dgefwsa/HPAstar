@@ -13,7 +13,13 @@ public class IntBound2D
     
     public bool InBounds(int2 pos) //Include
     {
-        return pos.x >= min.x || pos.x <= max.x &&
-            pos.y >= min.y || pos.y <= max.y;
+        return pos.x >= min.x && pos.x <= max.x &&
+            pos.y >= min.y && pos.y <= max.y;
+    }
+    public bool InBounds(int3 pos) //Include
+    {
+        return pos.x >= min.x && pos.x <= max.x &&
+            pos.y >= min.y && pos.y <= max.y &&
+            CurrentHeight == pos.z;
     }
 }

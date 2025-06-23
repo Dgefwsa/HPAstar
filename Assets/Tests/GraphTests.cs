@@ -10,7 +10,7 @@ public class GraphTests
     {
         var tiles = GridUtils.CreateGrid(length, width, height);
         var map = new GridMap(tiles);
-        LayeredGridPreprocessing layeredGridPreprocessing = new LayeredGridPreprocessing(map, 5, 3, false);
+        LayeredGridPreprocessing layeredGridPreprocessing = new LayeredGridPreprocessing(map, new IterativeDeepeningAstar(), 5, 3, false);
         var graph = layeredGridPreprocessing.CreateGraph();
         foreach (Tile tile in tiles)
         {
@@ -28,7 +28,7 @@ public class GraphTests
     {
         var tiles = GridUtils.CreateGrid(length, width, height);
         var map = new GridMap(tiles);
-        LayeredGridPreprocessing layeredGridPreprocessing = new LayeredGridPreprocessing(map, 5, 3, false);
+        LayeredGridPreprocessing layeredGridPreprocessing = new LayeredGridPreprocessing(map, new IterativeDeepeningAstar(), 5, 3, false);
         var graph = layeredGridPreprocessing.CreateGraph();
         foreach (var tile in tiles)
         {
