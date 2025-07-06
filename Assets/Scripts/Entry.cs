@@ -25,8 +25,10 @@ public class Entry : MonoBehaviour
     public int HierarchyMaxLevel;
     public bool UseDiagonals;
     public int FindPathLevel;
-    
 
+
+    public int left;
+    public int right;
     public void FindPath()
     {
         var start = new int3(0, 0, 0);
@@ -41,7 +43,7 @@ public class Entry : MonoBehaviour
     {
         Profiler.BeginSample("FindPathOld");
         var start = new int3(0, 0, 0);
-        var end = new int3(_map.Length - 1, _map.Width - 1, 0);
+        var end = new int3(_map.Length - 1, _map.Width - 1 , 0);
         var path = _pathfinder.FindPath(_graph, start, end, 0);
         if(path == null) return;
         _graphVisualizer.Path = path;
@@ -56,9 +58,14 @@ public class Entry : MonoBehaviour
         var tiles = GridUtils.CreateGrid(Length, Width, Height);
         foreach (var tile in tiles)
         {
+            if ((tile.pos.x == 0 || tile.pos.x == left || tile.pos.x > left && (tile.pos.x - (tile.pos.x / left - 1)) % left == 0) || (tile.pos.y == 0 || tile.pos.y == left || tile.pos.y > left && (tile.pos.y - (tile.pos.y / left - 1)) % left == 0)) continue;
+            if ((tile.pos.x == 0 || tile.pos.x == right || tile.pos.x > right && (tile.pos.x - (tile.pos.x / right - 1)) % right == 0) || (tile.pos.y == 0 || tile.pos.y == right || tile.pos.y > right && (tile.pos.y - (tile.pos.y / right - 1)) % right == 0)) continue;
             var rand  = Random.Range(0f, 1f);
-            if (rand < obstacleChance && !tile.pos.Equals(new int3(0, 0, 0)) && !tile.pos.Equals(new int3(Length - 1, Width - 1, 0)))
+            if (rand < obstacleChance && !tile.pos.Equals(new int3(0, 0, 0)) &&
+                !tile.pos.Equals(new int3(Length - 1, Width - 1, 0)))
+            {
                 tile.isObstacle = true;
+            }
         }
 
         _map = new GridMap(tiles);
@@ -74,4 +81,5 @@ public class Entry : MonoBehaviour
         
         Profiler.EndSample();
     }
+
 }
