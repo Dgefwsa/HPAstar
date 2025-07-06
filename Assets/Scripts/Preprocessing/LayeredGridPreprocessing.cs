@@ -161,7 +161,7 @@ public class LayeredGridPreprocessing
             }
         }
         if (lineSize > 0)
-        {
+        {   
             if (lineSize > 5)
             {
                 var entranceA = axis == Axis.X ? new int3(clusterA.max.x, i - 1, clusterA.CurrentHeight) : new int3(i - 1, clusterA.max.y, clusterA.CurrentHeight);
@@ -177,8 +177,8 @@ public class LayeredGridPreprocessing
             }
             else
             {
-                var entranceA = axis == Axis.X ? new int3(clusterA.max.x, i - (lineSize / 2), clusterA.CurrentHeight) : new int3(i - 1, clusterA.max.y, clusterA.CurrentHeight);
-                var entranceB = axis == Axis.X ? new int3(clusterB.min.x, i - (lineSize / 2), clusterB.CurrentHeight) : new int3(i - 1, clusterB.min.y, clusterB.CurrentHeight);
+                var entranceA = axis == Axis.X ? new int3(clusterA.max.x, i - (lineSize / 2) - 1, clusterA.CurrentHeight) : new int3(i - 1, clusterA.max.y, clusterA.CurrentHeight);
+                var entranceB = axis == Axis.X ? new int3(clusterB.min.x, i - (lineSize / 2) - 1, clusterB.CurrentHeight) : new int3(i - 1, clusterB.min.y, clusterB.CurrentHeight);
                 graph.SetNode(entranceA, level);
                 graph.SetNode(entranceB, level);
                 graph.SetEdge(entranceA, entranceB, 1, level, true, EdgeType.INTER);
