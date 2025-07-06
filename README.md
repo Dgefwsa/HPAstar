@@ -1,2 +1,2 @@
 # HPAstar
-Near Optimal Hierarchical Path-Finding A* (HPA) implementation
+Near Optimal Hierarchical Path-Finding A* (HPA) test
